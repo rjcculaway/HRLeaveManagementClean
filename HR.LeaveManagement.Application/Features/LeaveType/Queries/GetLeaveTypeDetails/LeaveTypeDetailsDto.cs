@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Application.Features.LeaveType.Queries.GetLeaveTypeDetails {
-    public class LeaveTypeDetailDto {
+    public class LeaveTypeDetailsDto {
         public int Id { get; set; }
 
         public DateTime? DateCreated { get; set; }
