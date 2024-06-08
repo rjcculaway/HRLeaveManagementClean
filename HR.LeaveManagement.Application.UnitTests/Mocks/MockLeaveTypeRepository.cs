@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.LeaveManagement.Application.UnitTests.Mocks {
+namespace HR.LeaveManagement.Application.UnitTests.Mock {
     public class MockLeaveTypeRepository {
-        public static Mock<ILeaveTypeRepository> GetLeaveTypeMockLeaveTypeRepository() {
+        public static Mock<ILeaveTypeRepository> GetMockLeaveTypeRepository() {
             var leaveTypes = new List<LeaveType> {
                 new LeaveType {
                     Id = 1,
