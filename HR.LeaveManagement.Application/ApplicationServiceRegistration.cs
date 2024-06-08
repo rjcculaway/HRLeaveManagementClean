@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using HR.LeaveManagement.Application.MappingProfiles;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
