@@ -17,13 +17,29 @@
 #pragma warning disable 8625 // Disable "CS8625 Cannot convert null literal to non-nullable reference type"
 #pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
 
-namespace HR.LeaveManagement.BlazorUI.Services.Base
-{
+namespace HR.LeaveManagement.BlazorUI.Services.Base {
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface IClient
-    {
+    public partial interface IClient {
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AuthResponse> LoginAsync(AuthRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AuthResponse> LoginAsync(AuthRequest body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RegistrationResponse> RegisterAsync(RegistrationRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RegistrationResponse> RegisterAsync(RegistrationRequest body, System.Threading.CancellationToken cancellationToken);
+
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveAllocationDto>> LeaveAllocationsAllAsync(bool? isLoggedInUser);
@@ -180,20 +196,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Client : IClient
-    {
+    public partial class Client : IClient {
         private System.Net.Http.HttpClient _httpClient;
         private static System.Lazy<System.Text.Json.JsonSerializerOptions> _settings = new System.Lazy<System.Text.Json.JsonSerializerOptions>(CreateSerializerSettings, true);
 
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public Client(System.Net.Http.HttpClient httpClient)
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             _httpClient = httpClient;
         }
 
-        private static System.Text.Json.JsonSerializerOptions CreateSerializerSettings()
-        {
+        private static System.Text.Json.JsonSerializerOptions CreateSerializerSettings() {
             var settings = new System.Text.Json.JsonSerializerOptions();
             UpdateJsonSerializerSettings(settings);
             return settings;
@@ -209,32 +223,169 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveAllocationDto>> LeaveAllocationsAllAsync(bool? isLoggedInUser)
-        {
+        public virtual System.Threading.Tasks.Task<AuthResponse> LoginAsync(AuthRequest body) {
+            return LoginAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<AuthResponse> LoginAsync(AuthRequest body, System.Threading.CancellationToken cancellationToken) {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/Auth/login"
+                    urlBuilder_.Append("api/Auth/login");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null) {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200) {
+                            var objectResponse_ = await ReadObjectResponseAsync<AuthResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null) {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<RegistrationResponse> RegisterAsync(RegistrationRequest body) {
+            return RegisterAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<RegistrationResponse> RegisterAsync(RegistrationRequest body, System.Threading.CancellationToken cancellationToken) {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/Auth/register"
+                    urlBuilder_.Append("api/Auth/register");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null) {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200) {
+                            var objectResponse_ = await ReadObjectResponseAsync<RegistrationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null) {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveAllocationDto>> LeaveAllocationsAllAsync(bool? isLoggedInUser) {
             return LeaveAllocationsAllAsync(isLoggedInUser, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveAllocationDto>> LeaveAllocationsAllAsync(bool? isLoggedInUser, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveAllocationDto>> LeaveAllocationsAllAsync(bool? isLoggedInUser, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveAllocations"
                     urlBuilder_.Append("api/LeaveAllocations");
                     urlBuilder_.Append('?');
-                    if (isLoggedInUser != null)
-                    {
+                    if (isLoggedInUser != null) {
                         urlBuilder_.Append(System.Uri.EscapeDataString("isLoggedInUser")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(isLoggedInUser, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
@@ -248,13 +399,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -262,30 +411,25 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
+                        if (status_ == 200) {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<LeaveAllocationDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -293,22 +437,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveAllocationsPOSTAsync(CreateLeaveAllocationCommand body)
-        {
+        public virtual System.Threading.Tasks.Task LeaveAllocationsPOSTAsync(CreateLeaveAllocationCommand body) {
             return LeaveAllocationsPOSTAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveAllocationsPOSTAsync(CreateLeaveAllocationCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveAllocationsPOSTAsync(CreateLeaveAllocationCommand body, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -316,7 +456,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveAllocations"
                     urlBuilder_.Append("api/LeaveAllocations");
 
@@ -329,13 +469,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -343,45 +481,37 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
-                        {
+                        if (status_ == 201) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -389,22 +519,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveAllocationsPUTAsync(UpdateLeaveAllocationCommand body)
-        {
+        public virtual System.Threading.Tasks.Task LeaveAllocationsPUTAsync(UpdateLeaveAllocationCommand body) {
             return LeaveAllocationsPUTAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveAllocationsPUTAsync(UpdateLeaveAllocationCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveAllocationsPUTAsync(UpdateLeaveAllocationCommand body, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -412,7 +538,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveAllocations"
                     urlBuilder_.Append("api/LeaveAllocations");
 
@@ -425,13 +551,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -439,49 +563,40 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
+                        if (status_ == 204) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -489,22 +604,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveAllocationsDELETEAsync(DeleteLeaveAllocationCommand body)
-        {
+        public virtual System.Threading.Tasks.Task LeaveAllocationsDELETEAsync(DeleteLeaveAllocationCommand body) {
             return LeaveAllocationsDELETEAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveAllocationsDELETEAsync(DeleteLeaveAllocationCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveAllocationsDELETEAsync(DeleteLeaveAllocationCommand body, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -512,7 +623,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveAllocations"
                     urlBuilder_.Append("api/LeaveAllocations");
 
@@ -525,13 +636,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -539,39 +648,32 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
+                        if (status_ == 204) {
                             return;
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -579,30 +681,26 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<LeaveAllocationDto> LeaveAllocationsGETAsync(int id)
-        {
+        public virtual System.Threading.Tasks.Task<LeaveAllocationDto> LeaveAllocationsGETAsync(int id) {
             return LeaveAllocationsGETAsync(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LeaveAllocationDto> LeaveAllocationsGETAsync(int id, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task<LeaveAllocationDto> LeaveAllocationsGETAsync(int id, System.Threading.CancellationToken cancellationToken) {
             if (id == null)
                 throw new System.ArgumentNullException("id");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveAllocations/{id}"
                     urlBuilder_.Append("api/LeaveAllocations/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -616,13 +714,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -630,30 +726,25 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
+                        if (status_ == 200) {
                             var objectResponse_ = await ReadObjectResponseAsync<LeaveAllocationDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -661,32 +752,27 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveRequestListDto>> LeaveRequestsAllAsync(bool? isLoggedInUser)
-        {
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveRequestListDto>> LeaveRequestsAllAsync(bool? isLoggedInUser) {
             return LeaveRequestsAllAsync(isLoggedInUser, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveRequestListDto>> LeaveRequestsAllAsync(bool? isLoggedInUser, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveRequestListDto>> LeaveRequestsAllAsync(bool? isLoggedInUser, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveRequests"
                     urlBuilder_.Append("api/LeaveRequests");
                     urlBuilder_.Append('?');
-                    if (isLoggedInUser != null)
-                    {
+                    if (isLoggedInUser != null) {
                         urlBuilder_.Append(System.Uri.EscapeDataString("isLoggedInUser")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(isLoggedInUser, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
@@ -700,13 +786,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -714,30 +798,25 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
+                        if (status_ == 200) {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<LeaveRequestListDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -745,22 +824,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveRequestsPOSTAsync(CreateLeaveRequestCommand body)
-        {
+        public virtual System.Threading.Tasks.Task LeaveRequestsPOSTAsync(CreateLeaveRequestCommand body) {
             return LeaveRequestsPOSTAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveRequestsPOSTAsync(CreateLeaveRequestCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveRequestsPOSTAsync(CreateLeaveRequestCommand body, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -768,7 +843,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveRequests"
                     urlBuilder_.Append("api/LeaveRequests");
 
@@ -781,13 +856,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -795,45 +868,37 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
-                        {
+                        if (status_ == 201) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -841,22 +906,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveRequestsPUTAsync(UpdateLeaveRequestCommand body)
-        {
+        public virtual System.Threading.Tasks.Task LeaveRequestsPUTAsync(UpdateLeaveRequestCommand body) {
             return LeaveRequestsPUTAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveRequestsPUTAsync(UpdateLeaveRequestCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveRequestsPUTAsync(UpdateLeaveRequestCommand body, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -864,7 +925,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveRequests"
                     urlBuilder_.Append("api/LeaveRequests");
 
@@ -877,13 +938,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -891,49 +950,40 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
+                        if (status_ == 204) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -941,30 +991,26 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<LeaveRequestDetailsDto> LeaveRequestsGETAsync(int id)
-        {
+        public virtual System.Threading.Tasks.Task<LeaveRequestDetailsDto> LeaveRequestsGETAsync(int id) {
             return LeaveRequestsGETAsync(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LeaveRequestDetailsDto> LeaveRequestsGETAsync(int id, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task<LeaveRequestDetailsDto> LeaveRequestsGETAsync(int id, System.Threading.CancellationToken cancellationToken) {
             if (id == null)
                 throw new System.ArgumentNullException("id");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveRequests/{id}"
                     urlBuilder_.Append("api/LeaveRequests/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -978,13 +1024,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -992,30 +1036,25 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
+                        if (status_ == 200) {
                             var objectResponse_ = await ReadObjectResponseAsync<LeaveRequestDetailsDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -1023,29 +1062,25 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveRequestsDELETEAsync(int id)
-        {
+        public virtual System.Threading.Tasks.Task LeaveRequestsDELETEAsync(int id) {
             return LeaveRequestsDELETEAsync(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveRequestsDELETEAsync(int id, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveRequestsDELETEAsync(int id, System.Threading.CancellationToken cancellationToken) {
             if (id == null)
                 throw new System.ArgumentNullException("id");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveRequests/{id}"
                     urlBuilder_.Append("api/LeaveRequests/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -1059,13 +1094,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -1073,39 +1106,32 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
+                        if (status_ == 204) {
                             return;
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -1113,22 +1139,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task CancelRequestAsync(CancelLeaveRequestCommand body)
-        {
+        public virtual System.Threading.Tasks.Task CancelRequestAsync(CancelLeaveRequestCommand body) {
             return CancelRequestAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task CancelRequestAsync(CancelLeaveRequestCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task CancelRequestAsync(CancelLeaveRequestCommand body, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1136,7 +1158,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveRequests/CancelRequest"
                     urlBuilder_.Append("api/LeaveRequests/CancelRequest");
 
@@ -1149,13 +1171,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -1163,49 +1183,40 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
+                        if (status_ == 204) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -1213,22 +1224,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task UpdateApprovalAsync(ChangeLeaveRequestApprovalCommand body)
-        {
+        public virtual System.Threading.Tasks.Task UpdateApprovalAsync(ChangeLeaveRequestApprovalCommand body) {
             return UpdateApprovalAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task UpdateApprovalAsync(ChangeLeaveRequestApprovalCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task UpdateApprovalAsync(ChangeLeaveRequestApprovalCommand body, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1236,7 +1243,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveRequests/UpdateApproval"
                     urlBuilder_.Append("api/LeaveRequests/UpdateApproval");
 
@@ -1249,13 +1256,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -1263,49 +1268,40 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
+                        if (status_ == 204) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -1313,27 +1309,23 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveTypeDto>> LeaveTypeAllAsync()
-        {
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveTypeDto>> LeaveTypeAllAsync() {
             return LeaveTypeAllAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveTypeDto>> LeaveTypeAllAsync(System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<LeaveTypeDto>> LeaveTypeAllAsync(System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveType"
                     urlBuilder_.Append("api/LeaveType");
 
@@ -1346,13 +1338,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -1360,30 +1350,25 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
+                        if (status_ == 200) {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<LeaveTypeDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -1391,22 +1376,18 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveTypePOSTAsync(CreateLeaveTypeCommand body)
-        {
+        public virtual System.Threading.Tasks.Task LeaveTypePOSTAsync(CreateLeaveTypeCommand body) {
             return LeaveTypePOSTAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveTypePOSTAsync(CreateLeaveTypeCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveTypePOSTAsync(CreateLeaveTypeCommand body, System.Threading.CancellationToken cancellationToken) {
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1414,7 +1395,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveType"
                     urlBuilder_.Append("api/LeaveType");
 
@@ -1427,13 +1408,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -1441,35 +1420,29 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
-                        {
+                        if (status_ == 201) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -1477,30 +1450,26 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<LeaveTypeDetailsDto> LeaveTypeGETAsync(int id)
-        {
+        public virtual System.Threading.Tasks.Task<LeaveTypeDetailsDto> LeaveTypeGETAsync(int id) {
             return LeaveTypeGETAsync(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LeaveTypeDetailsDto> LeaveTypeGETAsync(int id, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task<LeaveTypeDetailsDto> LeaveTypeGETAsync(int id, System.Threading.CancellationToken cancellationToken) {
             if (id == null)
                 throw new System.ArgumentNullException("id");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveType/{id}"
                     urlBuilder_.Append("api/LeaveType/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -1514,13 +1483,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -1528,30 +1495,25 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
+                        if (status_ == 200) {
                             var objectResponse_ = await ReadObjectResponseAsync<LeaveTypeDetailsDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
-                        else
-                        {
+                        else {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -1559,25 +1521,21 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveTypePUTAsync(string id, UpdateLeaveTypeCommand body)
-        {
+        public virtual System.Threading.Tasks.Task LeaveTypePUTAsync(string id, UpdateLeaveTypeCommand body) {
             return LeaveTypePUTAsync(id, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveTypePUTAsync(string id, UpdateLeaveTypeCommand body, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveTypePUTAsync(string id, UpdateLeaveTypeCommand body, System.Threading.CancellationToken cancellationToken) {
             if (id == null)
                 throw new System.ArgumentNullException("id");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -1585,7 +1543,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveType/{id}"
                     urlBuilder_.Append("api/LeaveType/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -1599,13 +1557,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -1613,49 +1569,40 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
+                        if (status_ == 204) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
@@ -1663,29 +1610,25 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LeaveTypeDELETEAsync(int id)
-        {
+        public virtual System.Threading.Tasks.Task LeaveTypeDELETEAsync(int id) {
             return LeaveTypeDELETEAsync(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LeaveTypeDELETEAsync(int id, System.Threading.CancellationToken cancellationToken)
-        {
+        public virtual async System.Threading.Tasks.Task LeaveTypeDELETEAsync(int id, System.Threading.CancellationToken cancellationToken) {
             if (id == null)
                 throw new System.ArgumentNullException("id");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
+            try {
+                using (var request_ = new System.Net.Http.HttpRequestMessage()) {
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/LeaveType/{id}"
                     urlBuilder_.Append("api/LeaveType/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
@@ -1699,13 +1642,11 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
-                    try
-                    {
+                    try {
                         var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
                         foreach (var item_ in response_.Headers)
                             headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
+                        if (response_.Content != null && response_.Content.Headers != null) {
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
@@ -1713,58 +1654,47 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
+                        if (status_ == 204) {
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
+                        if (status_ == 400) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
+                        if (status_ == 404) {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
-                        else
-                        {
+                        else {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
+                            if (objectResponse_.Object == null) {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (disposeResponse_)
                             response_.Dispose();
                     }
                 }
             }
-            finally
-            {
+            finally {
                 if (disposeClient_)
                     client_.Dispose();
             }
         }
 
-        protected struct ObjectResponseResult<T>
-        {
-            public ObjectResponseResult(T responseObject, string responseText)
-            {
+        protected struct ObjectResponseResult<T> {
+            public ObjectResponseResult(T responseObject, string responseText) {
                 this.Object = responseObject;
                 this.Text = responseText;
             }
@@ -1776,64 +1706,49 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
         public bool ReadResponseAsString { get; set; }
 
-        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Threading.CancellationToken cancellationToken)
-        {
-            if (response == null || response.Content == null)
-            {
+        protected virtual async System.Threading.Tasks.Task<ObjectResponseResult<T>> ReadObjectResponseAsync<T>(System.Net.Http.HttpResponseMessage response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Threading.CancellationToken cancellationToken) {
+            if (response == null || response.Content == null) {
                 return new ObjectResponseResult<T>(default(T), string.Empty);
             }
 
-            if (ReadResponseAsString)
-            {
+            if (ReadResponseAsString) {
                 var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                try
-                {
+                try {
                     var typedBody = System.Text.Json.JsonSerializer.Deserialize<T>(responseText, JsonSerializerSettings);
                     return new ObjectResponseResult<T>(typedBody, responseText);
                 }
-                catch (System.Text.Json.JsonException exception)
-                {
+                catch (System.Text.Json.JsonException exception) {
                     var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
                     throw new ApiException(message, (int)response.StatusCode, responseText, headers, exception);
                 }
             }
-            else
-            {
-                try
-                {
-                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                    {
+            else {
+                try {
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false)) {
                         var typedBody = await System.Text.Json.JsonSerializer.DeserializeAsync<T>(responseStream, JsonSerializerSettings, cancellationToken).ConfigureAwait(false);
                         return new ObjectResponseResult<T>(typedBody, string.Empty);
                     }
                 }
-                catch (System.Text.Json.JsonException exception)
-                {
+                catch (System.Text.Json.JsonException exception) {
                     var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
                     throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
                 }
             }
         }
 
-        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
-        {
-            if (value == null)
-            {
+        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo) {
+            if (value == null) {
                 return "";
             }
 
-            if (value is System.Enum)
-            {
+            if (value is System.Enum) {
                 var name = System.Enum.GetName(value.GetType(), value);
-                if (name != null)
-                {
+                if (name != null) {
                     var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
-                    if (field != null)
-                    {
-                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                    if (field != null) {
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute))
                             as System.Runtime.Serialization.EnumMemberAttribute;
-                        if (attribute != null)
-                        {
+                        if (attribute != null) {
                             return attribute.Value != null ? attribute.Value : name;
                         }
                     }
@@ -1842,24 +1757,19 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
                     return converted == null ? string.Empty : converted;
                 }
             }
-            else if (value is bool) 
-            {
+            else if (value is bool) {
                 return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
             }
-            else if (value is byte[])
-            {
-                return System.Convert.ToBase64String((byte[]) value);
+            else if (value is byte[]) {
+                return System.Convert.ToBase64String((byte[])value);
             }
-            else if (value is string[])
-            {
+            else if (value is string[]) {
                 return string.Join(",", (string[])value);
             }
-            else if (value.GetType().IsArray)
-            {
+            else if (value.GetType().IsArray) {
                 var valueArray = (System.Array)value;
                 var valueTextArray = new string[valueArray.Length];
-                for (var i = 0; i < valueArray.Length; i++)
-                {
+                for (var i = 0; i < valueArray.Length; i++) {
                     valueTextArray[i] = ConvertToString(valueArray.GetValue(i), cultureInfo);
                 }
                 return string.Join(",", valueTextArray);
@@ -1871,8 +1781,35 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CancelLeaveRequestCommand
-    {
+    public partial class AuthRequest {
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("password")]
+        public string Password { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class AuthResponse {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public string Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("userName")]
+        public string UserName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("token")]
+        public string Token { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CancelLeaveRequestCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int Id { get; set; }
@@ -1880,8 +1817,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ChangeLeaveRequestApprovalCommand
-    {
+    public partial class ChangeLeaveRequestApprovalCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int Id { get; set; }
@@ -1892,8 +1828,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateLeaveAllocationCommand
-    {
+    public partial class CreateLeaveAllocationCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("leaveTypeId")]
         public int LeaveTypeId { get; set; }
@@ -1901,8 +1836,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateLeaveRequestCommand
-    {
+    public partial class CreateLeaveRequestCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("startDate")]
         public System.DateTimeOffset StartDate { get; set; }
@@ -1919,8 +1853,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateLeaveTypeCommand
-    {
+    public partial class CreateLeaveTypeCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
@@ -1931,8 +1864,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DeleteLeaveAllocationCommand
-    {
+    public partial class DeleteLeaveAllocationCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int Id { get; set; }
@@ -1940,8 +1872,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LeaveAllocationDto
-    {
+    public partial class LeaveAllocationDto {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int Id { get; set; }
@@ -1961,8 +1892,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LeaveRequestDetailsDto
-    {
+    public partial class LeaveRequestDetailsDto {
 
         [System.Text.Json.Serialization.JsonPropertyName("startDate")]
         public System.DateTimeOffset StartDate { get; set; }
@@ -1997,8 +1927,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LeaveRequestListDto
-    {
+    public partial class LeaveRequestListDto {
 
         [System.Text.Json.Serialization.JsonPropertyName("requestingEmployeeId")]
         public string RequestingEmployeeId { get; set; }
@@ -2021,8 +1950,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LeaveTypeDetailsDto
-    {
+    public partial class LeaveTypeDetailsDto {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int Id { get; set; }
@@ -2042,8 +1970,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LeaveTypeDto
-    {
+    public partial class LeaveTypeDto {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int Id { get; set; }
@@ -2057,8 +1984,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ProblemDetails
-    {
+    public partial class ProblemDetails {
 
         [System.Text.Json.Serialization.JsonPropertyName("type")]
         public string Type { get; set; }
@@ -2078,8 +2004,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
         [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties {
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
@@ -2087,8 +2012,42 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UpdateLeaveAllocationCommand
-    {
+    public partial class RegistrationRequest {
+
+        [System.Text.Json.Serialization.JsonPropertyName("firstName")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string FirstName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastName")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string LastName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Email { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("userName")]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(int.MaxValue, MinimumLength = 6)]
+        public string UserName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("password")]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(int.MaxValue, MinimumLength = 6)]
+        public string Password { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RegistrationResponse {
+
+        [System.Text.Json.Serialization.JsonPropertyName("userId")]
+        public string UserId { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UpdateLeaveAllocationCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int Id { get; set; }
@@ -2105,8 +2064,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UpdateLeaveRequestCommand
-    {
+    public partial class UpdateLeaveRequestCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("startDate")]
         public System.DateTimeOffset StartDate { get; set; }
@@ -2129,8 +2087,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UpdateLeaveTypeCommand
-    {
+    public partial class UpdateLeaveTypeCommand {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int Id { get; set; }
@@ -2146,8 +2103,7 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
 
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ApiException : System.Exception
-    {
+    public partial class ApiException : System.Exception {
         public int StatusCode { get; private set; }
 
         public string Response { get; private set; }
@@ -2155,37 +2111,33 @@ namespace HR.LeaveManagement.BlazorUI.Services.Base
         public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
 
         public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
-            : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
-        {
+            : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException) {
             StatusCode = statusCode;
             Response = response;
             Headers = headers;
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return string.Format("HTTP Response: \n\n{0}\n\n{1}", Response, base.ToString());
         }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ApiException<TResult> : ApiException
-    {
+    public partial class ApiException<TResult> : ApiException {
         public TResult Result { get; private set; }
 
         public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
-            : base(message, statusCode, response, headers, innerException)
-        {
+            : base(message, statusCode, response, headers, innerException) {
             Result = result;
         }
     }
 
 }
 
-#pragma warning restore  108
-#pragma warning restore  114
-#pragma warning restore  472
-#pragma warning restore  612
+#pragma warning restore 108
+#pragma warning restore 114
+#pragma warning restore 472
+#pragma warning restore 612
 #pragma warning restore 1573
 #pragma warning restore 1591
 #pragma warning restore 8073

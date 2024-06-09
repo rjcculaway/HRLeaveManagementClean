@@ -66,7 +66,7 @@ namespace HR.LeaveManagement.Identity.Services {
                 await _userManager.AddToRoleAsync(user, "Employee");
                 return new RegistrationResponse() { UserId = user.Id };
             } else {
-                StringBuilder str = new StringBuilder();
+                StringBuilder str = new();
                 foreach (var err in result.Errors) {
                     str.AppendFormat("*{0}\n", err.Description);
                 }
